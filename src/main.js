@@ -15,8 +15,8 @@ if (!apiKey) {
   const map = new maplibregl.Map({
     container: "map",
     style: `https://api.maptiler.com/maps/streets-v2/style.json?key=${apiKey}`,
-    center: [-6.2603, 53.3498], // Dublin coordinates
-    zoom: 11,
+    center: [-6.2574, 53.3428], // Between St. Stephen's Green and Trinity
+    zoom: 15, // Much more zoomed in
     pitch: 45,
     maxBounds: [
       [-6.5, 53.2], // Southwest corner
