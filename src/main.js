@@ -13,23 +13,22 @@ if (!apiKey) {
 } else {
   // Create the map
   const map = new maplibregl.Map({
-    container: "app",
+    container: "map",
     style: `https://api.maptiler.com/maps/streets-v2/style.json?key=${apiKey}`,
     center: [-6.2603, 53.3498], // Dublin coordinates
-    zoom: 12,
-    pitch: 45, // Tilts the map for 3D effect
+    zoom: 11,
+    pitch: 45,
+    maxBounds: [
+      [-6.5, 53.2], // Southwest corner
+      [-6.0, 53.5], // Northeast corner
+    ],
+    maxZoom: 18,
+    minZoom: 10,
   });
 
-  // Wait for map to load, then update building colors
-  map.on("load", () => {
-    // Just change the color of the existing "Building 3D" layer
-    map.setPaintProperty("Building 3D", "fill-extrusion-color", "#a8d5ba"); // Green color like London map
-
-    console.log("Building colors updated to green!");
-
-    // Hide the busy layers to make it more minimal
+  // Hide labels immediately when style loads (before map renders)
+  map.on("styledata", () => {
     const layersToHide = [
-      // Labels and text
       "Road labels",
       "Highway junction",
       "Highway shield",
@@ -38,7 +37,7 @@ if (!apiKey) {
       "Highway shield interstate (US)",
       "Housenumber",
       "Place labels",
-      "Station", // This is likely train/bus stops
+      "Station",
       "Airport gate",
       "Airport",
       "State labels",
@@ -50,8 +49,6 @@ if (!apiKey) {
       "River labels",
       "Ocean labels",
       "Lake labels",
-
-      // POI icons (points of interest)
       "Public",
       "Sport",
       "Education",
@@ -59,11 +56,9 @@ if (!apiKey) {
       "Culture",
       "Shopping",
       "Food",
-      "Transport", // This might be bus/tram stops
+      "Transport",
       "Healthcare",
       "Park",
-
-      // Transportation symbols
       "Gondola",
       "Ferry",
       "Oneway",
@@ -76,8 +71,12 @@ if (!apiKey) {
         map.setLayoutProperty(layerId, "visibility", "none");
       }
     });
+  });
 
-    console.log("Map cleaned up - removed clutter but kept 3D buildings!");
+  // Update building colors after everything loads
+  map.on("load", () => {
+    map.setPaintProperty("Building 3D", "fill-extrusion-color", "#a8d5ba");
+    console.log("Map loaded and styled!");
   });
 
   // Add navigation controls
